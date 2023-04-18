@@ -33,19 +33,23 @@ def add_phone(conn, customer_id, phone):
     """, (customer_id, phone))
 
 def change_customer(conn, customer_id, first_name=None, last_name=None, email=None, phone=None):
-    conn.execute("""
+    if first_name is not None:
+        conn.execute("""
         UPDATE customer SET first_name=%s WHERE customer_id=%s
         """, (first_name, customer_id))
-       
-    conn.execute("""
+    
+    if last_name is not None:
+        conn.execute("""
         UPDATE customer SET last_name=%s WHERE customer_id=%s
         """, (last_name, customer_id))
     
-    conn.execute("""
+    if email is not None:
+        conn.execute("""
         UPDATE customer SET email=%s WHERE customer_id=%s
         """, (email, customer_id))
     
-    conn.execute("""
+    if phone is not None:
+        conn.execute("""
         UPDATE phonebook SET phone=%s WHERE customer_id=%s
         """, (customer_id, phone))
 
@@ -64,25 +68,29 @@ def delete_customer(conn, customer_id):
     """, (customer_id,))
 
 def find_customer(conn, first_name=None, last_name=None, email=None, phone=None):
-    conn.execute("""
+    if first_name is not None & last_name is not None:
+        conn.execute("""
         SELECT cl.first_name, cl.last_name, cl.email, ph.phone FROM customer AS cl
         LEFT JOIN phonebook AS ph ON cl.customer_id = ph.customer_id
         WHERE first_name=%s;
         """, (first_name,))
     
-    conn.execute("""
+    if last_name is not None:
+        conn.execute("""
         SELECT cl.first_name, cl.last_name, cl.email, ph.phone FROM customer AS cl
         LEFT JOIN phonebook AS ph ON cl.customer_id = ph.customer_id
         WHERE last_name=%s;
         """, (last_name,))
     
-    conn.execute("""
+    if email is not None:
+        conn.execute("""
         SELECT cl.first_name, cl.last_name, cl.email, ph.phone FROM customer AS cl
         LEFT JOIN phonebook AS ph ON cl.customer_id = ph.customer_id
         WHERE email=%s;
         """, (email,))
     
-    conn.execute("""
+    if phone is not None:
+        conn.execute("""
         SELECT cl.first_name, cl.last_name, cl.email, ph.phone FROM customer AS cl
         LEFT JOIN phonebook AS ph ON cl.customer_id = ph.customer_id
         WHERE phone=%s;
