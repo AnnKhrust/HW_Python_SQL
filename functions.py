@@ -68,30 +68,27 @@ def delete_customer(conn, customer_id):
     """, (customer_id,))
 
 def find_customer(conn, first_name=None, last_name=None, email=None, phone=None):
-    if first_name is not None & last_name is not None:
-        conn.execute("""
-        SELECT cl.first_name, cl.last_name, cl.email, ph.phone FROM customer AS cl
+    column = []
+    param = []
+    if first_name:
+        column.append('first_name=%s')
+        param.append(first_name)
+    if last_name:
+        column.append('last_name=%s')
+        param.append(last_name)
+    if email:
+        column.append('email=%s')
+        param.append(email)
+    if phone:
+        column.append('phone=%s')
+        param.append(phone)
+
+        
+    conn.execute(f"""
+        SELECT cl.first_name, cl.last_name, cl.email, ph.phone,  cl.customer_id FROM customer AS cl
         LEFT JOIN phonebook AS ph ON cl.customer_id = ph.customer_id
-        WHERE first_name=%s;
-        """, (first_name,))
+        WHERE {' and '.join(column)}""", param)
+
+    return conn.fetchone()
     
-    if last_name is not None:
-        conn.execute("""
-        SELECT cl.first_name, cl.last_name, cl.email, ph.phone FROM customer AS cl
-        LEFT JOIN phonebook AS ph ON cl.customer_id = ph.customer_id
-        WHERE last_name=%s;
-        """, (last_name,))
     
-    if email is not None:
-        conn.execute("""
-        SELECT cl.first_name, cl.last_name, cl.email, ph.phone FROM customer AS cl
-        LEFT JOIN phonebook AS ph ON cl.customer_id = ph.customer_id
-        WHERE email=%s;
-        """, (email,))
-    
-    if phone is not None:
-        conn.execute("""
-        SELECT cl.first_name, cl.last_name, cl.email, ph.phone FROM customer AS cl
-        LEFT JOIN phonebook AS ph ON cl.customer_id = ph.customer_id
-        WHERE phone=%s;
-        """, (phone,))
